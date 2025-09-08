@@ -2,7 +2,7 @@ name: AttractiveAlbania Draft Builder
 
 on:
   schedule:
-    - cron: "45 14 * * *"
+    - cron: "45 15 * * *"
   workflow_dispatch: {}   # allow manual runs
 
 concurrency:
