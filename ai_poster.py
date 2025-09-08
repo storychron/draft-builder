@@ -2,6 +2,8 @@ import os, json, base64, time, datetime as dt, requests, re, unicodedata, random
 from typing import Optional, Tuple, List, Set
 from dotenv import load_dotenv
 
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+
 load_dotenv()
 
 # --------- ENV ---------
