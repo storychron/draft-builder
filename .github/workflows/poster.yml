@@ -2,8 +2,7 @@ name: AttractiveAlbania Draft Builder
 
 on:
   schedule:
-    # Runs every day at 07:45 UTC (≈ 09:45 Europe/Tirane in summer)
-    - cron: "45 7 * * *"
+    - cron: "45 14 * * *"
   workflow_dispatch: {}   # allow manual runs
 
 concurrency:
