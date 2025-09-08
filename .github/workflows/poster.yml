@@ -53,3 +53,6 @@ jobs:
           CREATE_LIMIT_PER_RUN: ${{ secrets.CREATE_LIMIT_PER_RUN }}
           DAILY_LOCK: "false"
         run: python ai_poster.py
+
+env:
+  DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
