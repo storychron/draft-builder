@@ -1,4 +1,55 @@
+name: AttractiveAlbania Draft Builder
+
 on:
   schedule:
+    # Runs every day at 07:45 UTC (≈ 09:45 Europe/Tirane in summer)
     - cron: "45 7 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch: {}   # allow manual runs
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run draft builder
+        env:
+          # --- WordPress ---
+          WP_BASE_URL: ${{ secrets.WP_BASE_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+
+          # --- LLM provider (OpenRouter by default) ---
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER }}          # set to OPENROUTER
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ secrets.OPENROUTER_MODEL }}  # e.g. openai/gpt-4o-mini
+
+          # Optional OpenAI (if you switch later)
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+
+          # --- Defaults / knobs ---
+          WP_DEFAULT_AUTHOR_ID: ${{ secrets.WP_DEFAULT_AUTHOR_ID }}
+          WP_DEFAULT_CATEGORY_ID: ${{ secrets.WP_DEFAULT_CATEGORY_ID }}
+          TARGET_LANGUAGE: ${{ secrets.TARGET_LANGUAGE }}
+          MIN_WORDS: ${{ secrets.MIN_WORDS }}
+          MAX_WORDS: ${{ secrets.MAX_WORDS }}
+          FALLBACK_TOPICS: ${{ secrets.FALLBACK_TOPICS }}
+
+          # Pool & throttling (we don’t need the daily lock in Actions)
+          TARGET_DRAFT_POOL: ${{ secrets.TARGET_DRAFT_POOL }}
+          CREATE_LIMIT_PER_RUN: ${{ secrets.CREATE_LIMIT_PER_RUN }}
+          DAILY_LOCK: "false"
+        run: python ai_poster.py
